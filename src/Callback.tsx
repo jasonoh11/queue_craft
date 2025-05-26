@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 const Callback = () => {
   const navigate = useNavigate();
   const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
-  
+
   const hasRun = useRef(false);
 
   useEffect(() => {
@@ -31,7 +31,7 @@ const Callback = () => {
 		if (data.access_token) {
 			localStorage.setItem('access_token', data.access_token);
 			console.log('Setting to:', data.access_token);
-			navigate('/');
+			navigate('/home');
 		  }
 	}
 
