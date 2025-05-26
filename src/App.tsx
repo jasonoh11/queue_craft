@@ -3,9 +3,9 @@ import './App.css'
 function App() {
 
   const handleLogin = async () => {
-    const clientId = 'ed0001afec184c13b5500eaf2dd7ee5b';
-    const redirectUri = 'http://127.0.0.1:5173/callback';
-    const scopes = 'user-top-read';
+    const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
+    const redirectUri = import.meta.env.VITE_SPOTIFY_REDIRECT_URI;
+    const scopes = import.meta.env.VITE_SPOTIFY_SCOPES;    
 
     const codeVerifier = generateRandomString(64);
     const codeChallenge = await generateCodeChallenge(codeVerifier);

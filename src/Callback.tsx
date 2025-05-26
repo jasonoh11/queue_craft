@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 
 const Callback = () => {
   const navigate = useNavigate();
-  const clientId = "ed0001afec184c13b5500eaf2dd7ee5b";
+  const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
+  
   const hasRun = useRef(false);
 
   useEffect(() => {
