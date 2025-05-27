@@ -7,6 +7,8 @@ import QueueBuilder from "./QueueBuilder";
 
 function Dashboard() {
   const [showPlaylists, setShowPlaylists] = useState(false);
+  const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(null);
+
 
   const fetchPlaylists = async () => {
     const token = localStorage.getItem("access_token");
@@ -22,8 +24,8 @@ function Dashboard() {
       }
     );
 
+    
     const data = await response.json();
-    console.log(data);
     return data.items;
   };
 
@@ -59,9 +61,9 @@ function Dashboard() {
           </button>
         </div>
 
-		<PlaylistTable playlists={playlists} showPlaylists={showPlaylists}/>
+		<PlaylistTable playlists={playlists} showPlaylists={showPlaylists} selectedPlaylist={selectedPlaylist} onSelectPlaylist={setSelectedPlaylist}/>
 
-		<QueueBuilder showPlaylists={showPlaylists}/>
+		<QueueBuilder showPlaylists={showPlaylists} selectedPlaylist={selectedPlaylist}/>
       </div>
     </>
   );
