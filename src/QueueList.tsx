@@ -1,17 +1,20 @@
+import type { Song } from "./types/Song";
+
 type QueueListProps = {
-  queue: string[];
+  queue: Song[] | null;
   onQueueRemove: (index: number) => void;
 };
 
 function QueueList({ queue, onQueueRemove }: QueueListProps) {
   return (
     <>
-      <div className="flex-1 p-6 flex flex-col">
-        <h3 className="m-0 mb-4 text-base font-medium text-white">
+      <div className="flex-1 px-6 flex flex-col">
+        <h3 className="sticky top-0 z-10 bg-gray-800 m-0 py-4 text-base font-medium text-white">
           Current Queue
         </h3>
-        <div className="flex-1 overflow-y-auto">
-          {queue.length > 0 ? (
+
+        <div className="flex-1 h-64 overflow-y-auto">
+          {queue ? (
             queue.map((song, index) => (
               <div
                 key={index}
@@ -20,7 +23,9 @@ function QueueList({ queue, onQueueRemove }: QueueListProps) {
                 <span className="w-6 text-xs text-gray-400 font-medium">
                   {index + 1}
                 </span>
-                <span className="flex-1 text-sm text-white ml-2">{song}</span>
+                <span className="flex-1 text-sm text-white ml-2">
+                  {song.track.name + " - " + song.track.artists[0]?.name}
+                </span>
                 <button
                   className="w-6 h-6 border-none bg-transparent text-gray-400 hover:bg-gray-600 hover:text-white cursor-pointer rounded-full text-lg flex items-center justify-center transition-colors"
                   onClick={() => onQueueRemove(index)}

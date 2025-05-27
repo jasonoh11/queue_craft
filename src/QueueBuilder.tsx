@@ -9,13 +9,10 @@ type QueueBuilderProps = {
 };
 
 function QueueBuilder({ showPlaylists, selectedPlaylist }: QueueBuilderProps) {
-  const [queue, setQueue] = useState([
-    "Blinding Lights - The Weeknd",
-    "Levitating - Dua Lipa",
-    "Good 4 U - Olivia Rodrigo",
-  ]);
+  const [queue, setQueue] = useState<Song[] | null>(null);
 
   const removeFromQueue = (index: number) => {
+    if (!queue) return;
     setQueue(
       queue.filter((_, i) => {
         return i !== index;
@@ -50,6 +47,7 @@ function QueueBuilder({ showPlaylists, selectedPlaylist }: QueueBuilderProps) {
         .then((data) =>
           data.items.map((item: any) => ({
             track: {
+              id: item.track.id,
               name: item.track.name,
               artists: item.track.artists,
             },
@@ -69,17 +67,38 @@ function QueueBuilder({ showPlaylists, selectedPlaylist }: QueueBuilderProps) {
     const songs = await fetchSongs(selectedPlaylist);
     if (!songs || songs.length === 0) return;
 
-    const shuffled = songs.sort(() => Math.random() - 0.5).slice(0, 10);
+    setQueue(songs.sort(() => Math.random() - 0.5).slice(0, 10));
+  };
 
-    setQueue(
-      shuffled.map((song: Song) => {
-        const artistName =
-          song.track.artists && song.track.artists.length > 0
-            ? song.track.artists[0].name
-            : "Unknown Artist";
-        return song.track.name + " - " + artistName;
-      })
-    );
+  const sendQueue = async () => {
+    queue?.map((song: Song) => console.log(song.track.id));
+
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      console.error("No access token found");
+      return;
+    }
+    console.log("token: " + token);
+
+    queue?.map(async (song: Song) => {
+      const response = await fetch(
+        `https://api.spotify.com/v1/me/player/queue?uri=spotify:track:${song.track.id}`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (response.ok) {
+        console.log("Song added to queue!");
+      } else {
+        console.error(
+          "Failed to add to queue:",
+          response.status,
+          response.statusText
+        );
+      }
+    });
   };
 
   return (
@@ -98,7 +117,16 @@ function QueueBuilder({ showPlaylists, selectedPlaylist }: QueueBuilderProps) {
           </button>
         </div>
 
-        <QueueList queue={queue} onQueueRemove={removeFromQueue} />
+        <div className="h-128 overflow-y-auto">
+          <QueueList queue={queue} onQueueRemove={removeFromQueue} />
+        </div>
+
+        <button
+          className="w-full p-3 bg-green-500 hover:bg-green-400 text-white border-none rounded-lg text-sm font-medium cursor-pointer transition-colors"
+          onClick={() => sendQueue()}
+        >
+          Send Queue
+        </button>
       </div>
     </>
   );
