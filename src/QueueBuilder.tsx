@@ -92,11 +92,22 @@ function QueueBuilder({ showPlaylists, selectedPlaylist }: QueueBuilderProps) {
       if (response.ok) {
         console.log("Song added to queue!");
       } else {
+        let errorText = "";
+        try {
+          const errorBody = await response.json();
+          errorText = JSON.stringify(errorBody, null, 2);
+        } catch (e) {
+          errorText = await response.text();
+        }
+
         console.error(
-          "Failed to add to queue:",
+          "Spotify API error:",
           response.status,
-          response.statusText
+          response.statusText,
+          "\nError body:\n",
+          errorText
         );
+        return;
       }
     });
   };
